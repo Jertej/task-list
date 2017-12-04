@@ -4,7 +4,6 @@ import IconButton from 'material-ui/IconButton';
 import PlayArrow from 'material-ui/svg-icons/av/play-arrow';
 import Stop from 'material-ui/svg-icons/av/stop';
 
-
 class TimerTask extends React.Component {
   constructor(props) {
     super(props);
@@ -16,7 +15,7 @@ class TimerTask extends React.Component {
   }
 
   componentWillMount() {
-    const { task: { timeData } } = this.props;
+    const {task: {timeData}} = this.props;
     this.setState(timeData);
   }
 
@@ -28,9 +27,9 @@ class TimerTask extends React.Component {
     this.props.handleStart(this.props.task.id);
   };
   handleStop = () => {
-    const { state: timeData, props: { task } } = this;
+    const {state: timeData, props: {task}} = this;
     this.props.handleStop(task.id, timeData);
-    this.setState({ running: false });
+    this.setState({running: false});
   };
 
   format(milliseconds) {
@@ -60,19 +59,19 @@ class TimerTask extends React.Component {
       })
     }
   };
+
   render() {
     let timeTask = this.format(this.state.elapsed);
     return (
       <section className="stopwatch">
         <div className="stopwatch-time">{timeTask}</div>
-        <div className="stopwatch-controls">
-          <IconButton onClick={this.handleStart}><PlayArrow color={"black"}/></IconButton>
-          <IconButton onClick={this.handleStop}><Stop color={"black"}/></IconButton>
-        </div>
+        <IconButton disabled={this.props.disabled} onClick={this.handleStart}><PlayArrow color="black"/></IconButton>
+        <IconButton onClick={this.handleStop}><Stop color="black"/></IconButton>
       </section>
     );
   }
 }
+
 TimerTask.propTypes = {
   handleStart: PropTypes.func.isRequired,
   handleStop: PropTypes.func.isRequired,

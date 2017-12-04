@@ -1,6 +1,6 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import IconButton from 'material-ui/IconButton';
-import Pause from 'material-ui/svg-icons/av/pause';
 import PlayArrow from 'material-ui/svg-icons/av/play-arrow';
 import Stop from 'material-ui/svg-icons/av/stop';
 
@@ -15,21 +15,22 @@ class TimerTask extends React.Component {
     }
   }
 
+  componentWillMount() {
+    const { task: { timeData } } = this.props;
+    this.setState(timeData);
+  }
+
   handleStart = () => {
     this.setState({
       running: true,
       lastTick: Date.now(),
     });
+    this.props.handleStart(this.props.task.id);
   };
   handleStop = () => {
-    this.setState({
-      running: false,
-      elapsed: 0,
-      lastTick: 0,
-    });
-  };
-  handlePause = () => {
-    this.setState({running: false});
+    const { state: timeData, props: { task } } = this;
+    this.props.handleStop(task.id, timeData);
+    this.setState({ running: false });
   };
 
   format(milliseconds) {
@@ -41,7 +42,7 @@ class TimerTask extends React.Component {
   }
 
   componentDidMount() {
-    this.interval = setInterval(this.tick, 1000)
+    this.interval = setInterval(this.tick, 1000);
   }
 
   componentWillUnmount() {
@@ -65,16 +66,21 @@ class TimerTask extends React.Component {
       <section className="stopwatch">
         <div className="stopwatch-time">{timeTask}</div>
         <div className="stopwatch-controls">
-          {this.state.running ?
-            <IconButton onClick={this.handlePause}><Pause color={"black"}/></IconButton>
-            :
-            <IconButton onClick={this.handleStart}><PlayArrow color={"black"}/></IconButton>
-          }
+          <IconButton onClick={this.handleStart}><PlayArrow color={"black"}/></IconButton>
           <IconButton onClick={this.handleStop}><Stop color={"black"}/></IconButton>
         </div>
       </section>
     );
   }
 }
-
+TimerTask.propTypes = {
+  handleStart: PropTypes.func.isRequired,
+  handleStop: PropTypes.func.isRequired,
+  taskInProgress: PropTypes.number,
+  task: PropTypes.shape({
+    id: PropTypes.number,
+    text: PropTypes.string,
+    completed: PropTypes.bool,
+  }).isRequired,
+};
 export default TimerTask;

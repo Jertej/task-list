@@ -1,14 +1,13 @@
 import React, {Component} from 'react';
 import './App.css';
-import Checkbox from 'material-ui/Checkbox';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import Paper from 'material-ui/Paper';
 import TextField from 'material-ui/TextField';
 import IconButton from 'material-ui/IconButton';
 import Add from 'material-ui/svg-icons/content/add';
-import {List, ListItem} from 'material-ui/List';
-import Delete from 'material-ui/svg-icons/action/delete';
-import TimerTask from "./components/TimerTask";
+import {List} from 'material-ui/List';
+import TimeTracker from "./components/TimeTracker";
+import Task from "./components/Task";
 
 class App extends Component {
   constructor(props) {
@@ -19,10 +18,15 @@ class App extends Component {
         id: Date.now(),
         text: '',
         completed: false,
+        timeData: {
+          lastTick: 0,
+          elapsed: 0,
+          running: false,
+        }
       },
+      taskInProgress: null,
     }
   }
-
   onCheck = (id, isChecked) => {
     const {tasks} = this.state;
     const currentTask = tasks.find((task) => {
@@ -43,17 +47,21 @@ class App extends Component {
   };
   addTask = () => {
     const {newTask, tasks} = this.state;
-    tasks.unshift(newTask);
+    tasks.push(newTask);
     this.setState({
       tasks,
       newTask: {
         id: Date.now(),
         text: '',
-        completed: false
-      }
+        completed: false,
+        timeData: {
+          lastTick: 0,
+          elapsed: 0,
+          running: false,
+        }
+      },
     });
   };
-
   removeTask(id) {
     const {tasks} = this.state;
     const taskIndex = tasks.findIndex((task) => {
@@ -64,6 +72,22 @@ class App extends Component {
     }
     this.setState({tasks});
   }
+
+  handleStop = (id, timeData) => {
+    const { tasks } = this.state;
+    const currentTask = tasks.find(task => task.id === id);
+    if (currentTask) {
+      currentTask.timeData = timeData;
+    }
+    debugger
+    this.setState({ tasks, taskInProgress: null });
+  };
+
+  handleStart = (id) => {
+    if (!this.state.taskInProgress) {
+      this.setState({ taskInProgress: id });
+    }
+  };
 
   render() {
     return (
@@ -78,18 +102,13 @@ class App extends Component {
                 this.state.tasks.map((task) => {
                   return (
                     <div key={task.id}>
-                      <ListItem
-                        primaryText={task.text}
-                        leftCheckbox={
-                          <Checkbox onCheck={(event, isChecked) => {
-                            return this.onCheck(task.id, isChecked);
-                          }} checked={task.completed}/>
-                        }>
-                        <IconButton onClick={() => {
-                          return this.removeTask(task.id);
-                        }}><Delete/></IconButton>
-                      </ListItem>
-                      <TimerTask/>
+                      <Task onCheck={this.onCheck} removeTask={this.removeTask} task={task}/>
+                      <TimeTracker
+                        task={task}
+                        taskInProgress={this.state.taskInProgress}
+                        handleStart={this.handleStart}
+                        handleStop={this.handleStop}
+                      />
                     </div>
                   );
                 })

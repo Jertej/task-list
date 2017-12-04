@@ -7,6 +7,7 @@ import TextField from 'material-ui/TextField';
 import IconButton from 'material-ui/IconButton';
 import Add from 'material-ui/svg-icons/content/add';
 import {List, ListItem} from 'material-ui/List';
+import Delete from 'material-ui/svg-icons/action/delete';
 
 class App extends Component {
   constructor(props) {
@@ -20,7 +21,6 @@ class App extends Component {
       },
     }
   }
-
   onCheck = (id, isChecked) => {
     const {tasks} = this.state;
     const currentTask = tasks.find((task) => {
@@ -51,7 +51,16 @@ class App extends Component {
       }
     });
   };
-
+  removeTask(id) {
+    const {tasks} = this.state;
+    const taskIndex = tasks.findIndex((task) => {
+      return task.id === id;
+    });
+    if (taskIndex >= 0) {
+      tasks.splice(taskIndex, 1);
+    }
+    this.setState({tasks});
+  }
   render() {
     return (
       <MuiThemeProvider>
@@ -59,19 +68,6 @@ class App extends Component {
           <header>
             <h1>Завдання:</h1>
           </header>
-          <div>
-            <div>
-              <TextField
-                fullWidth
-                floatingLabelText="Напишіть завдання"
-                onChange={this.onChange}
-                value={this.state.newTask.text}
-              />
-            </div>
-            <div>
-              <IconButton onClick={this.addTask} disabled={!this.state.newTask.text}><Add/></IconButton>
-            </div>
-          </div>
           <section className="todo-list">
             <List>
               {
@@ -82,12 +78,27 @@ class App extends Component {
                       primaryText={task.text}
                       leftCheckbox={<Checkbox onCheck={(event, isChecked) => {
                         return this.onCheck(task.id, isChecked);
-                      }} checked={task.completed}/>}
-                    />
+                      }} checked={task.completed}/>}>
+                      <IconButton onClick={() => {
+                        return this.removeTask(task.id);
+                      }}><Delete/></IconButton>
+                    </ListItem>
                   );
                 })
               }
-
+              <div>
+                <div>
+                  <TextField
+                    fullWidth
+                    floatingLabelText="Що потрібно зробити?"
+                    onChange={this.onChange}
+                    value={this.state.newTask.text}
+                  />
+                </div>
+                <div>
+                  <IconButton onClick={this.addTask} disabled={!this.state.newTask.text}><Add/></IconButton>
+                </div>
+              </div>
             </List>
           </section>
         </Paper>

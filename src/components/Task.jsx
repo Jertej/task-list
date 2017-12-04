@@ -4,8 +4,9 @@ import {ListItem} from 'material-ui/List';
 import Checkbox from 'material-ui/Checkbox';
 import Delete from 'material-ui/svg-icons/action/delete';
 import IconButton from 'material-ui/IconButton';
+import {SortableElement} from 'react-sortable-hoc';
 
-export default function Task(props) {
+function Task(props) {
   const {task} = props;
   const leftCheckBox = (
     <Checkbox
@@ -25,12 +26,16 @@ export default function Task(props) {
     </IconButton>
   );
 
+  const { timeTracker } = props;
   return (
-    <ListItem
-      primaryText={task.text}
-      leftCheckbox={leftCheckBox}
-      rightIconButton={rightIconButton}
-    />
+    <div className="task-container">
+      <ListItem
+        primaryText={task.text}
+        leftCheckbox={leftCheckBox}
+        rightIconButton={rightIconButton}
+      />
+      {timeTracker}
+    </div>
   );
 }
 
@@ -43,4 +48,6 @@ Task.propTypes = {
     completed: PropTypes.bool,
   }).isRequired,
 };
+
+export default SortableElement(Task);
 

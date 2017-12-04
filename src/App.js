@@ -1,13 +1,13 @@
 import React, {Component} from 'react';
-import './App.css';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import Paper from 'material-ui/Paper';
+import {arrayMove} from 'react-sortable-hoc';
 import TextField from 'material-ui/TextField';
 import IconButton from 'material-ui/IconButton';
 import Add from 'material-ui/svg-icons/content/add';
-import {List} from 'material-ui/List';
-import TimeTracker from "./components/TimeTracker";
-import Task from "./components/Task";
+
+import './App.css';
+import TasksList from './components/TasksList';
 
 class App extends Component {
   constructor(props) {
@@ -88,7 +88,11 @@ class App extends Component {
       this.setState({taskInProgress: id});
     }
   };
-
+  onSortEnd = ({oldIndex, newIndex}) => {
+    this.setState({
+      tasks: arrayMove(this.state.tasks, oldIndex, newIndex),
+    });
+  };
   get completedCount () {
     const count = this.state.tasks.filter(task => task.completed).length;
     return `${count}/${this.totalCount}`;
@@ -110,39 +114,27 @@ class App extends Component {
             </div>
           </header>
           <section className="todo-list">
-            <List>
-              {
-                this.state.tasks.map((task) => {
-                  return (
-                    <div key={task.id} className="task-container">
-                      <Task
-                        onCheck={this.onCheck}
-                        removeTask={this.removeTask}
-                        task={task}
-                      />
-                      <TimeTracker
-                        task={task}
-                        disabled={!!this.state.taskInProgress}
-                        taskInProgress={this.state.taskInProgress}
-                        handleStart={this.handleStart}
-                        handleStop={this.handleStop}
-                      />
-                    </div>
-                  );
-                })
-              }
-              <div className="todo-form">
-                <TextField
-                  fullWidth
-                  className="text-field"
-                  floatingLabelText="Що потрібно зробити?"
-                  onChange={this.onChange}
-                  value={this.state.newTask.text}
-                />
-                <IconButton onClick={this.addTask} disabled={!this.state.newTask.text}><Add/></IconButton>
-              </div>
-            </List>
+            <TasksList
+              tasks={this.state.tasks}
+              onCheck={this.onCheck}
+              removeTask={this.removeTask}
+              handleStart={this.handleStart}
+              handleStop={this.handleStop}
+              taskInProgress={this.state.taskInProgress}
+              newTask={this.state.newTask}
+              onSortEnd={this.onSortEnd}
+            />
           </section>
+          <div className="todo-form">
+            <TextField
+              fullWidth
+              className="text-field"
+              floatingLabelText="Що потрібно зробити?"
+              onChange={this.onChange}
+              value={this.state.newTask.text}
+            />
+            <IconButton onClick={this.addTask} disabled={!this.state.newTask.text}><Add/></IconButton>
+          </div>
         </Paper>
       </MuiThemeProvider>
     );

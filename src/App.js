@@ -20,6 +20,7 @@ class App extends Component {
       },
     }
   }
+
   onCheck = (id, isChecked) => {
     const {tasks} = this.state;
     const currentTask = tasks.find((task) => {
@@ -58,10 +59,18 @@ class App extends Component {
           <header>
             <h1>Завдання:</h1>
           </header>
-
           <div>
-            <TextField fullWidth floatingLabelText="Напишіть завдання" onChange={this.onChange} value={this.state.newTask.text}/>
-            <IconButton onClick={this.addTask} disabled={!this.state.newTask.text}><Add/></IconButton>
+            <div>
+              <TextField
+                fullWidth
+                floatingLabelText="Напишіть завдання"
+                onChange={this.onChange}
+                value={this.state.newTask.text}
+              />
+            </div>
+            <div>
+              <IconButton onClick={this.addTask} disabled={!this.state.newTask.text}><Add/></IconButton>
+            </div>
           </div>
           <section className="todo-list">
             <List>

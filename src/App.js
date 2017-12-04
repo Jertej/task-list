@@ -8,6 +8,7 @@ import IconButton from 'material-ui/IconButton';
 import Add from 'material-ui/svg-icons/content/add';
 import {List, ListItem} from 'material-ui/List';
 import Delete from 'material-ui/svg-icons/action/delete';
+import TimerTask from "./components/TimerTask";
 
 class App extends Component {
   constructor(props) {
@@ -21,6 +22,7 @@ class App extends Component {
       },
     }
   }
+
   onCheck = (id, isChecked) => {
     const {tasks} = this.state;
     const currentTask = tasks.find((task) => {
@@ -51,6 +53,7 @@ class App extends Component {
       }
     });
   };
+
   removeTask(id) {
     const {tasks} = this.state;
     const taskIndex = tasks.findIndex((task) => {
@@ -61,28 +64,33 @@ class App extends Component {
     }
     this.setState({tasks});
   }
+
   render() {
     return (
       <MuiThemeProvider>
         <Paper>
           <header>
-            <h1>Завдання:</h1>
+            <h1>Список завдань:</h1>
           </header>
           <section className="todo-list">
             <List>
               {
                 this.state.tasks.map((task) => {
                   return (
-                    <ListItem
-                      key={task.id}
-                      primaryText={task.text}
-                      leftCheckbox={<Checkbox onCheck={(event, isChecked) => {
-                        return this.onCheck(task.id, isChecked);
-                      }} checked={task.completed}/>}>
-                      <IconButton onClick={() => {
-                        return this.removeTask(task.id);
-                      }}><Delete/></IconButton>
-                    </ListItem>
+                    <div key={task.id}>
+                      <ListItem
+                        primaryText={task.text}
+                        leftCheckbox={
+                          <Checkbox onCheck={(event, isChecked) => {
+                            return this.onCheck(task.id, isChecked);
+                          }} checked={task.completed}/>
+                        }>
+                        <IconButton onClick={() => {
+                          return this.removeTask(task.id);
+                        }}><Delete/></IconButton>
+                      </ListItem>
+                      <TimerTask/>
+                    </div>
                   );
                 })
               }

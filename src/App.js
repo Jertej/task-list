@@ -101,7 +101,14 @@ class App extends Component {
   get totalCount () {
     return this.state.tasks.length;
   }
+  shouldCancelStart = (e) => {
+    // Cancel sorting if the event target is an `input`, `textarea`, `select` or `option`
+    const disabledElements = ['input', 'textarea', 'select', 'option', 'button', 'svg', 'path'];
 
+    if (disabledElements.indexOf(e.target.tagName.toLowerCase()) !== -1) {
+      return true; // Return true to cancel sorting
+    }
+  };
   render() {
     return (
       <MuiThemeProvider>
@@ -115,6 +122,7 @@ class App extends Component {
           </header>
           <section className="todo-list">
             <TasksList
+              shouldCancelStart={this.shouldCancelStart}
               tasks={this.state.tasks}
               onCheck={this.onCheck}
               removeTask={this.removeTask}
